@@ -151,9 +151,15 @@ Examples: `参加月会`, `参加技术分享`
   weekly reports use the Friday or Sunday of the current week.
 - **Tags:** `#tme/meeting/YYYY/MM` — month derived from the title date.
 - **Bullet items:** Verb phrases only — 开发, 跟测, 合入, 转体验, 体验问题跟进, 数据上报,
-  方案评估, 工作量评估. No complete sentences, no "完成了", no "进行了".
+  方案评估, 工作量评估. No complete sentences. Strip modifiers like
+  继续/接着/再/正在 before action verbs (e.g., "继续跟测" → "跟测").
+  No "完成了", no "进行了".
 - **Numbering:** Ordered list starting from 1. Group related work under the same
   numbered item.
+- **Item spacing:** Consecutive numbered items within the same section must NOT
+  be separated by blank lines. The last `*` bullet of one item should be directly
+  followed by the next `序号.` line. Blank lines are only allowed between sections
+  (between `##` headers), not between items within a section.
 - **Weekly aggregation:** When aggregating daily reports into a weekly report,
   merge actions for the same project into a chain: `需求开发、转体验、跟测、合入`.
   Status tags are not used in weekly reports.
