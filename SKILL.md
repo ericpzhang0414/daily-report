@@ -31,9 +31,41 @@ Read the most recent 1-2 daily reports to identify ongoing projects, their
 version numbers, and module names. Use this to seed the draft — but the user's
 actual input always takes precedence over what the notes suggest.
 
-## Step 2: Gather Today's Work
+## Step 2: Populate Yesterday's Work
 
-Ask the user what they worked on. Two prompts cover most situations:
+**Default rule:** Today's "昨天的进展" = Yesterday's "今天的工作".
+
+When creating a new daily report, do NOT ask the user "昨天做了什么?" — pull
+it from yesterday's report automatically:
+
+```
+1. Determine yesterday's date (today - 1 day)
+2. Search for yesterday's report: search_notes(query: "YYYYMMDD | 日报")
+3. If found: read its content, extract the "今天的工作" section
+4. Use it directly as today's "昨天的进展" draft
+5. Only ask the user if something looks wrong or you need clarification
+```
+
+**Weekend / Holiday handling:**
+
+If yesterday is a weekend (Saturday/Sunday) or a holiday, search backwards
+to find the most recent workday's report:
+
+| Today | Yesterday | Read this report for "昨天的进展" |
+|-------|-----------|----------------------------------|
+| Monday | Sunday | Last Friday's report |
+| Tuesday | Monday | Monday's report ✅ |
+| After holiday | Holiday | The last workday before the holiday |
+
+- If the most recent report is ≤ 3 days old: use it
+- If the most recent report is > 3 days old: leave "昨天的进展" empty, ask the user
+- Weekend days: Saturday and Sunday
+
+**The user can always override** — if they say "昨天实际做了X而不是Y", apply the change.
+
+## Step 3: Gather Today's Work
+
+Ask the user what they worked on today. Two prompts cover most situations:
 
 **For daily reports:**
 > 以下是根据最近日报识别到的项目。今天做了什么？有哪些需要新增/修改？
@@ -44,7 +76,7 @@ Ask the user what they worked on. Two prompts cover most situations:
 The user can reply with shorthand — the skill translates it into the proper
 format.
 
-## Step 3: Format the Report
+## Step 4: Format the Report
 
 ### Daily Report Format
 
@@ -164,7 +196,7 @@ Examples: `参加月会`, `参加技术分享`
   merge actions for the same project into a chain: `需求开发、转体验、跟测、合入`.
   Status tags are not used in weekly reports.
 
-## Step 4: Confirm Then Create
+## Step 5: Confirm Then Create
 
 1. Show the formatted report to the user.
 2. Wait for explicit confirmation (e.g., "好的", "可以", "创建").
