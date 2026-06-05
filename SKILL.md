@@ -1,10 +1,6 @@
 ---
 name: daily-report
-description: |
-  Generate daily or weekly work reports in the user's TME format and save them
-  as Bear notes. Use when the user mentions 日报, 周报, daily report, weekly
-  report, standup, 写日报, 写周报, or any request to write or generate a work
-  report. Also use when the user asks to summarize their recent work.
+description: Generate daily or weekly work reports in the user's TME format and save them as Bear notes. Use when the user mentions 日报, 周报, daily report, weekly report, standup, 写日报, 写周报, or any request to write or generate a work report. Also use when the user asks to summarize their recent work.
 ---
 
 # Daily / Weekly Report Generator
