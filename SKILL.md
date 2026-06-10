@@ -99,7 +99,7 @@ format.
 ## ❮ 昨天的进展
 序号. 🔨 版本号 【模块】需求名称（状态）
 * 具体工作项
-序号. 🐛 版本号 - 问题描述
+序号. 🐛 版本号 【模块】问题描述
 * 具体工作项
 序号. 🎯 OKR：主题
 * 子工作项
@@ -121,7 +121,7 @@ format.
 ## 本周的工作
 序号. 🔨 版本号 【模块】需求名称
 * 动作链1、动作链2、动作链3
-序号. 🐛 版本号 - 问题描述
+序号. 🐛 版本号 【模块】问题描述
 * 动作链
 序号. 🎯 OKR：主题
 * 子工作项
@@ -170,10 +170,10 @@ Note: In rare cases the version number may not be determined yet in early
 stages. Use `TBD` or ask the user.
 
 **2. 问题跟进（Issue Tracking）**
-Format: `序号. 🐛 版本号 - 问题描述` or `序号. 🐛 版本号 - 【模块】问题描述`
+Format: `序号. 🐛 版本号 【模块】问题描述`
 
 Usually no status tag. Example:
-`2、🐛 20.5.0 - 问题跟进` or `2、🐛 20.4.5 - 【启动定位】客户端后台定位策略...`
+`2、🐛 20.5.0 【启动定位】客户端后台定位策略问题跟进`
 
 **3. OKR**
 Format: `序号. 🎯 OKR：主题` with `*` sub-items.
@@ -207,6 +207,13 @@ Examples: `参加月会`, `参加技术分享`
 - **Weekly aggregation:** When aggregating daily reports into a weekly report,
   merge actions for the same project into a chain: `需求开发、转体验、跟测、合入`.
   Status tags are not used in weekly reports.
+- **Sort order:** Items within each section MUST be sorted by priority:
+  1. **Primary — version ascending:** Lower version = closer to release = higher
+     priority. Example: 20.5.0 items before 20.6.0 items.
+  2. **Secondary — type (same version):** 🐛 问题跟进 > 🔨 需求开发 > 🎯 OKR > 📌 其他.
+     Bug fixes that block a release take precedence over features on the same version.
+  3. **Edge case — bug without version or version far below feature:** If uncertain
+     (e.g., bug has no version or is on a much older release), ask the user.
 
 ## Step 5: Confirm Then Create
 
@@ -291,24 +298,24 @@ User says "写日报，猜你喜欢场景选择还在开发中"
 
 User says "写日报。场景选择还在开发，另外有个问题跟进，OKR 方案在细化，下午参加了月会。"
 
-**Draft:**
+**Draft (sorted by version priority: 20.5.0 🐛 > 20.5.5 🔨):**
 ```markdown
 # 20260602 | 日报
 #tme/daily/2026/06
 
 ## ❮ 昨天的进展
-1、🔨 20.5.5 【推荐】猜你喜欢场景选择（开发中）
-* 开发
-2、🐛 20.5.0 - 问题跟进
+1、🐛 20.5.0 【模块】问题跟进
 * 体验问题跟进
+2、🔨 20.5.5 【推荐】猜你喜欢场景选择（开发中）
+* 开发
 3、🎯 OKR：AI-Coding
 * AGENT.md 建设方案细化
 
 ## ❙ 今天的工作
-1、🔨 20.5.5 【推荐】猜你喜欢场景选择（开发中）
-* 开发
-2、🐛 20.5.0 - 问题跟进
+1、🐛 20.5.0 【模块】问题跟进
 * 体验问题跟进
+2、🔨 20.5.5 【推荐】猜你喜欢场景选择（开发中）
+* 开发
 3、🎯 OKR：AI-Coding
 * AGENT.md 建设方案细化
 4、📌 参加月会
