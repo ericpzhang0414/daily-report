@@ -20,7 +20,7 @@ When the user asks to write a report, first search recent Bear notes to
 understand what's in progress:
 
 ```
-mcp__bear__search_notes with query "#tme/meeting" and sort by modified date
+mcp__bear__search_notes with query "#tme/daily" and sort by modified date
 ```
 
 Read the most recent 1-2 daily reports to identify ongoing projects, their
@@ -61,10 +61,26 @@ to find the most recent workday's report:
 
 ## Step 3: Gather Today's Work
 
+**Auto-populate from yesterday's plan:**
+
+Before asking the user, check if yesterday's report has content in the
+"明天的计划" section:
+
+```
+1. Read yesterday's report (already found in Step 2)
+2. If "## ❯ 明天的计划" has any items:
+   → Copy them directly into today's "## ❙ 今天的工作" as the starting draft
+3. Then ask the user what else to add or modify
+```
+
+This way planned work carries forward automatically. The user only needs to
+add new items or adjust what changed — they don't need to re-enter ongoing
+work they already planned.
+
 Ask the user what they worked on today. Two prompts cover most situations:
 
 **For daily reports:**
-> 以下是根据最近日报识别到的项目。今天做了什么？有哪些需要新增/修改？
+> 以下是根据昨天计划和你最近的日报识别到的项目。今天做了什么？有哪些需要新增/修改？
 
 **For weekly reports:**
 > 这周主要做了哪些工作？我根据日报帮你汇总了初稿，你看看有没有要补充的。
@@ -78,7 +94,7 @@ format.
 
 ```markdown
 # YYYYMMDD | 日报
-#tme/meeting/YYYY/MM
+#tme/daily/YYYY/MM
 
 ## ❮ 昨天的进展
 序号. 🔨 版本号 【模块】需求名称（状态）
@@ -100,7 +116,7 @@ format.
 
 ```markdown
 # YYYYMMDD | 周报
-#tme/meeting/YYYY/MM
+#tme/daily/YYYY/MM
 
 ## 本周的工作
 序号. 🔨 版本号 【模块】需求名称
@@ -177,7 +193,7 @@ Examples: `参加月会`, `参加技术分享`
 
 - **Title date:** `YYYYMMDD` format. For daily reports use today's date. For
   weekly reports use the Friday or Sunday of the current week.
-- **Tags:** `#tme/meeting/YYYY/MM` — month derived from the title date.
+- **Tags:** `#tme/daily/YYYY/MM` — month derived from the title date.
 - **Bullet items:** Verb phrases only — 开发, 跟测, 合入, 转体验, 体验问题跟进, 数据上报,
   方案评估, 工作量评估. No complete sentences. Strip modifiers like
   继续/接着/再/正在 before action verbs (e.g., "继续跟测" → "跟测").
@@ -204,8 +220,15 @@ mcp__bear__create_note with:
   content: <the confirmed markdown>
 ```
 
-The `#tme/meeting/YYYY/MM` tag is embedded in the content as the first line
-after the title. Bear will parse it automatically.
+The `#tme/daily/YYYY/MM` tag is embedded in the content as line 2
+immediately after the title. Bear will parse it automatically.
+
+4. **MUST validate format after creation** — `create_note` can insert a blank
+   line before the tag (known Bear bug). Check with `get_note(id, includeContent:true)`:
+   - Line 1: `# YYYYMMDD | 日报`
+   - Line 2: `#tme/daily/YYYY/MM` (NOT blank)
+   - Line 3: blank
+   - If line 2 is blank, fix immediately with `edit_note` per Tag Operation Protocol
 
 **After creation:** Inform the user the note has been created. Remind them that
 `## 明天的计划` is left empty and can be filled in later.
@@ -251,7 +274,7 @@ User says "写日报，猜你喜欢场景选择还在开发中"
 **Draft:**
 ```markdown
 # 20260602 | 日报
-#tme/meeting/2026/06
+#tme/daily/2026/06
 
 ## ❮ 昨天的进展
 1、🔨 20.5.5 【推荐】猜你喜欢场景选择（开发中）
@@ -271,7 +294,7 @@ User says "写日报。场景选择还在开发，另外有个问题跟进，OKR
 **Draft:**
 ```markdown
 # 20260602 | 日报
-#tme/meeting/2026/06
+#tme/daily/2026/06
 
 ## ❮ 昨天的进展
 1、🔨 20.5.5 【推荐】猜你喜欢场景选择（开发中）
@@ -300,7 +323,7 @@ User says "写日报。场景选择开发完了，今天转体验。"
 **Draft:**
 ```markdown
 # 20260602 | 日报
-#tme/meeting/2026/06
+#tme/daily/2026/06
 
 ## ❮ 昨天的进展
 1、🔨 20.5.5 【推荐】猜你喜欢场景选择（开发中）
@@ -322,7 +345,7 @@ Skill reads the week's daily reports and aggregates (no status tags in weekly):
 **Draft:**
 ```markdown
 # 20260605 | 周报
-#tme/meeting/2026/06
+#tme/daily/2026/06
 
 ## 本周的工作
 1、🔨 20.5.5 【推荐】猜你喜欢场景选择
