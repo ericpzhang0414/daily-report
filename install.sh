@@ -5,6 +5,12 @@ set -uo pipefail
 SCRIPT_DIR="${0:A:h}"
 SKILL_SRC="$SCRIPT_DIR/SKILL.md"
 
+# ── OpenClaw 适配 ──────────────────────────────────────────────────
+ADAPT_SH="$SCRIPT_DIR/../.shared/adapt-openclaw.sh"
+if [[ -f "$ADAPT_SH" ]]; then
+  source "$ADAPT_SH"
+fi
+
 # ── 颜色定义 ──────────────────────────────────────────────────────
 RED='\033[0;31m'
 GREEN='\033[0;32m'
@@ -42,6 +48,7 @@ AGENTS=(
   "gemini      cmd gemini $HOME/.gemini/skills/daily-report"
   "copilot     cmd copilot $HOME/.copilot/skills/daily-report"
   "codex       cmd codex $HOME/.codex/skills/daily-report"
+  "openclaw    cmd openclaw $HOME/.openclaw/skills/daily-report"
 )
 
 # ── 颜色辅助函数 ──────────────────────────────────────────────────
@@ -71,6 +78,10 @@ if $UNINSTALL; then
   removed=0
   for entry in "${AGENTS[@]}"; do
     read -r name dtype dval sdir <<< "$entry"
+    if [[ "$name" == "openclaw" ]]; then
+      detect_openclaw && uninstall_openclaw_skill "daily-report"
+      continue
+    fi
     agent_installed "$dtype" "$dval" || continue
     target="$sdir/SKILL.md"
     if [[ -L "$target" ]]; then
@@ -116,6 +127,23 @@ for entry in "${AGENTS[@]}"; do
     c SKIP
     printf " %s\n" "未安装"
     skipped=$((skipped + 1))
+    continue
+  fi
+
+  # ── OpenClaw 专用安装路径 ──────────────────────────────────────
+  if [[ "$name" == "openclaw" ]] && detect_openclaw; then
+    if ! $CHECK_ONLY; then
+      adapt_openclaw_skill "$SKILL_SRC" "$HOME/.openclaw/skills/daily-report"
+    elif ! verify_openclaw_skill "$HOME/.openclaw/skills/daily-report"; then
+      printf "%-14s " "$name"; c FAIL; printf " %s\n" "verification failed"
+    fi
+    printf "%-14s " "$name"
+    if [[ -f "$HOME/.openclaw/skills/daily-report/SKILL.md" ]]; then
+      c OK; printf " %s\n" "installed (sed-transformed)"
+      installed=$((installed + 1))
+    else
+      c FAIL; printf " %s\n" "not installed"
+    fi
     continue
   fi
 
@@ -177,6 +205,9 @@ for entry in "${AGENTS[@]}"; do
     installed=$((installed + 1))
   fi
 done
+
+# ── OpenClaw: 如有新 MCP 注册则重启 Gateway ──────────────────────
+restart_gateway_if_mcp_changed 2>/dev/null || true
 
 echo ""
 echo "安装完成: $installed 个智能体, 跳过 $skipped 个未安装的智能体"
